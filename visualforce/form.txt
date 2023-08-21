@@ -1,0 +1,27 @@
+<apex:page controller="CustomerController">
+    <apex:form id="formCustomer">
+        <apex:pageMessages />
+        <apex:pageBlock title="Customer Information">
+            <apex:pageBlockSection columns="1">
+                <apex:inputText value="{!firstName}" label="First Name "/>
+                <apex:inputText value="{!lastName}" label="Last Name"/>
+                <apex:inputText value="{!phoneNumber}" label="Phone Number"/>
+                <apex:inputText value="{!email}" label="Email"/>
+				<apex:inputText value="{!website}" label="Website"/>
+                <apex:inputText value="{!language}" label="Language"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons>
+			<apex:commandButton value="Create Account and Contact ;)" action="{!createAccountAndContact}" rerender="formCustomer,customerInfo"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+<apex:pageBlock id="customerInfo" title="Created Customer Information">
+<apex:pageBlockTable value="{!contacts}" var="contact">
+<apex:column headerValue="Account Name" value="{!contact.Account.Name}"/>
+<apex:column headerValue="Phone Number" value="{!contact.Account.Phone}"/>
+<apex:column headerValue="Email" value="{!contact.Email}"/>
+<apex:column headerValue="Website" value="{!contact.Account.Website}"/>
+<apex:column headerValue="Language" value="{!contact.Account.Language__c}"/>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:page>

@@ -1,0 +1,72 @@
+public class CustomerController {
+    //getter setter for the required fields
+    public String firstName { get; set; }
+    public String lastName { get; set; }
+    public String phoneNumber { get; set; }
+    public String email { get; set; }
+    public String website { get; set; }
+    public String language { get; set; }
+    
+    public List<Account> MyCreatedCustomers { get; set; }
+    
+    public List<Contact> contacts { get; set; }
+    
+    public CustomerController() {
+        if (MyCreatedCustomers == null) {
+            MyCreatedCustomers = new List<Account>();
+        }
+          contacts = new List<Contact>();
+
+    }
+    public void createAccountAndContact() {
+        // Validation checks
+        if (String.isBlank(firstName) || String.isBlank(lastName) || String.isBlank(phoneNumber) || String.isBlank(email) || String.isBlank(website) || String.isBlank(language)) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'All fields are required.'));
+            return;
+        }
+        
+        // Phone number validation
+        if (!Pattern.matches('^\\d{10}$', phoneNumber)) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Phone number should be 10 digits.'));
+            return;
+        }
+        
+        // Email validation
+        if (!Pattern.matches('^\\w+([-+.\\w]+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$', email)) {
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Invalid email format.'));
+            return;
+        }
+
+        // Creating Account and Contact records
+        Account newAccount = new Account(
+            Name = firstName + ' ' + lastName,
+            Phone = phoneNumber,
+            Website = website,
+            Language__c = language
+        );
+        insert newAccount;
+
+        Contact newContact = new Contact(
+            FirstName = firstName,
+            LastName = lastName,  
+            Phone = phoneNumber,
+            Email = email,
+            AccountId = newAccount.Id
+        );
+        insert newContact;
+
+        // Clearing form fields after successful creation
+        firstName = '';
+        lastName = '';
+        phoneNumber = '';
+        email = '';
+        website = '';
+        language = '';
+
+        // Updating the list of created customers
+        MyCreatedCustomers.add(newAccount);
+        contacts = [SELECT Id, FirstName, LastName, Phone, Email, Account.Name, Account.Phone, Account.Website, Account.Language__c FROM Contact];
+
+        ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.INFO, 'Account and Contact created successfully :))'));
+    }
+}
